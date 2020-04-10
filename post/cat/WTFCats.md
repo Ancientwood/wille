@@ -1,4 +1,4 @@
-![WTF Cats](https://cdn.jsdelivr.net/gh/Ancientwood/wille/img/WTFCats.jpg)
+![WTF Cats](https://cdn.jsdelivr.net/gh/Ancientwood/wille/img/cat/WTFCats.jpg)
 
 ## 《Chapter 2》
 

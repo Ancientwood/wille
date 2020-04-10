@@ -1,4 +1,4 @@
-![Tai Chi Cats](https://cdn.jsdelivr.net/gh/Ancientwood/wille/img/TaiChiCats.jpg)
+![Tai Chi Cats](https://cdn.jsdelivr.net/gh/Ancientwood/wille/img/cat/TaiChiCats.jpg)
 
 ## 《Chapter 1》
 
