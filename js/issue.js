@@ -33,7 +33,7 @@ window.addEventListener("hashchange", function() {
 });
 
 //generate markdown body include post & catalog
-function generate(key,value,path,isCata = false) {
+function generate(key,value,path,isCata = false,isComment = false) {
     var dataType = "text";
     var header = {
         'Accept':"application/vnd.github.v3.html"
@@ -41,6 +41,9 @@ function generate(key,value,path,isCata = false) {
     if(isCata){
         dataType = "json";
         header = null;
+    }
+    if(isComment){
+        dataType = "json";
     }
 
     $.ajax({
@@ -51,9 +54,12 @@ function generate(key,value,path,isCata = false) {
         headers:header,
         success:function(res,code,xhr) {
             localStorage[key] = xhr.getResponseHeader("etag");
+            var arr = [];
             if(isCata){
                 localStorage.setItem(value,JSON.stringify(getCata(res)));
-            } else{
+            } else if(isComment){
+                localStorage.setItem(value,JSON.stringify(getComment(res)));
+            } else {
                 localStorage[value] = JSON.parse(res).body_html;
             }
         }
@@ -66,6 +72,18 @@ function getCata(res) {
     var arr = [];
     data.forEach(item => {
         var dt = {id:item.number,title:item.title,user:item.user.login,avatar:item.user.avatar_url};
+        arr.push(dt);
+    });
+
+    return arr;
+}
+
+//get catalog data
+function getComment(res) {
+    var data = res;
+    var arr = [];
+    data.forEach(item => {
+        var dt = {body:item.body_html,user:item.user.login,avatar:item.user.avatar_url};
         arr.push(dt);
     });
 
@@ -99,6 +117,21 @@ function inPost(hashTag){
 
     $("div.markdown-body").html(localStorage[postTag]);
 
+    //append comment
+    path = baseUrl + "/"+ hashTag+ "/comments";
+    postTag = "post_comments" + paths[paths.length-2] + "_" +  hashTag;
+    keyTag = paths[paths.length-2] + "_comments" + hashTag;
+
+    if(judgeModify(keyTag,path) || !localStorage[postTag])
+        generate(keyTag,postTag,path,false,true);
+
+    JSON.parse(localStorage[postTag]).forEach(item => {
+        $("div.markdown-body").append("<hr/>");
+        //TODO:add author and avatar
+        $("div.markdown-body").append(item.body);
+    });
+
+
     $(".back").attr("href",pathName);
 
     keyTag = paths[paths.length-2];
@@ -109,25 +142,24 @@ function inPost(hashTag){
         generate(keyTag,cataTag,path,true);
     }
 
-    // var arr = localStorage[cataTag].split(",");
     var arr  =JSON.parse(localStorage[cataTag]);
     for(var i=0;i<arr.length;i++){
-        if(hashTag === arr[i]){
+        if(parseInt(hashTag) === arr[i].id){
             if(i === 0){
                 $(".prev").hide();
                 $(".next").show();
-                $(".next").attr("href",pathName + "#/" + arr[i+1]);
+                $(".next").attr("href",pathName + "#/" + arr[i+1].id);
                 break;
             } else if(i === arr.length - 1){
                 $(".next").hide();
                 $(".prev").show();
-                $(".prev").attr("href",pathName + "#/" + arr[i-1]);
+                $(".prev").attr("href",pathName + "#/" + arr[i-1].id);
                 break;
             } else {
                 $(".next").show();
                 $(".prev").show();
-                $(".next").attr("href",pathName + "#/" + arr[i+1]);
-                $(".prev").attr("href",pathName + "#/" + arr[i-1]);
+                $(".next").attr("href",pathName + "#/" + arr[i+1].id);
+                $(".prev").attr("href",pathName + "#/" + arr[i-1].id);
                 break;
             }
         }
