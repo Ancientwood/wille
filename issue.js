@@ -128,7 +128,8 @@ function inPost(hashTag){
     JSON.parse(localStorage[postTag]).forEach(item => {
         $("div.markdown-body").append("<hr/>");
         //TODO:add author and avatar
-        $("div.markdown-body").append(item.body);
+        console.log(item.body)
+        $("div.markdown-body").append(item.body.replace("<a class=\"user-mention\" data-hovercard-type=\"user\" data-hovercard-url=\"/users/Ancientwood/hovercard\" data-octo-click=\"hovercard-link-click\" data-octo-dimensions=\"link_type:self\" href=\"https://github.com/Ancientwood\">@Ancientwood</a>",""));
     });
 
 
